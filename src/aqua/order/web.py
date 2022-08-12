@@ -226,10 +226,13 @@ def create_app(
     load_suppliers: SupplierLoader,
 ) -> Iterator[web.Application]:
     app = web.Application()
-    with importlib.resources.path(resources, "style.css") as style_css:
+    with importlib.resources.path(
+        resources, "script.js"
+    ) as script_js, importlib.resources.path(resources, "style.css") as style_css:
         app.router.add_routes(
             [
                 web.get("/", partial(index, load_articles)),
+                web.get("/script.js", partial(file, script_js)),
                 web.get("/style.css", partial(file, style_css)),
                 web.post("/order{tail:(/.*)?}", partial(order, load_suppliers)),
             ]

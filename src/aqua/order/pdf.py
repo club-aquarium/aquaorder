@@ -76,16 +76,11 @@ def write_order_tex(
     fp.write(
         r"""}
 
-\parbox[t]{.5\linewidth}{"""
+"""
     )
     fp.write(tex_escape(info["from_address"]))
     fp.write(
-        r"""}%
-\parbox[t]{.5\linewidth}{\raggedleft Lieferdatum: """
-    )
-    fp.write(tex_escape(date))
-    fp.write(
-        r"""}
+        r"""
 
 St.-Nr.: """
     )
@@ -103,6 +98,8 @@ Kd.-Nr.: """
     fp.write(tex_escape(info["from_name"]))
     fp.write(": ")
     fp.write(tex_escape(info["from_phone"]))
+    fp.write(r"""\hfill Lieferdatum: """)
+    fp.write(tex_escape(date))
     fp.write(
         r"""
 

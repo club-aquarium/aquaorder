@@ -16,6 +16,13 @@ class BuildPyCommand(build_py):
             "src/style.scss",
             "src/aqua/order/resources/style.css",
         )
+        run(
+            "esbuild",
+            "--bundle",
+            "--platform=browser",
+            "--outfile=src/aqua/order/resources/script.js",
+            "src/script.ts",
+        )
         super().run()
 
 

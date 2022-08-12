@@ -9,8 +9,10 @@
 , pyyaml
 
 , black
+, esbuild
 , flake8
 , mypy
+, nodePackages
 , sassc
 }:
 
@@ -32,8 +34,10 @@ buildPythonApplication {
 
   nativeBuildInputs = [
     black
+    esbuild
     flake8
     mypy
+    nodePackages.typescript
     sassc
   ];
 
