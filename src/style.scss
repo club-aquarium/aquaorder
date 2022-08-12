@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  & > :nth-child(2) {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1em;
+    border-top: .4pt solid black;
+    border-bottom: .4pt solid black;
+  }
+}
+
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+
+  &, thead {
+    border-top: .4pt solid black;
+    border-bottom: .4pt solid black;
+  }
+
+  .odd {
+    background: #efefef;
+  }
+
+  td, th {
+    padding-left: .5em;
+    padding-right: .5em;
+  }
+
+  .id {
+    text-align: right;
+  }
+  .size {
+    text-align: center;
+    white-space: nowrap;
+  }
+  .amount input {
+    text-align: center;
+    width: 5em;
+    margin: .25em 0;
+  }
+  .hint {
+    font-style: italic;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+
+  .button-container {
+    padding: .5em;
+  }
+
+  & > .fill {
+    flex-grow: 1;
+  }
+
+  & > * {
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      {% for supplier, color in suppliers.items() %}
+        .{{ supplier }} .supplier, .button-container.{{ supplier }} {
+          background: {{ color }};
+        }
+      {% endfor %}
+    </style>
+  </head>
+  <body>
+    <form method="POST" action="order" target="_blank">
+      <div class="root">
+        <div class="buttons">
+          <div class="fill" />
+          <div class="button-container">Lieferdatum: <input type="date" name="date" required="" /></div>
+        </div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Artikelname</th>
+                <th>Gebinde</th>
+                <th>Anzahl</th>
+              </tr>
+            </thead>
+            {% set root = namespace(index=0) %}
+            {% for section in articles %}
+              <tbody>
+                {% for article_choices in section %}
+                  {% set outer_loop = loop %}
+                  {% for supplier, article in article_choices.items() if isinstance(article, dict) %}
+                    <tr class="{% if loop.first %}first {% endif %}{{ "even" if root.index % 2 else "odd" }} {{ supplier }}">
+                      <td class="supplier">
+                        {{- "" -}}
+                        <input type="radio" tabindex="-1" id="{{ root.index }}_{{ supplier }}" name="{{ root.index }}_supplier" {% if loop.first %}checked=""{% endif %} value="{{ supplier }}" title="{{ supplier }}" />
+                        {{- "" -}}
+                      </td>
+                      <td class="id">
+                        {{- "" -}}
+                        <label for="{{ root.index }}_{{ supplier }}">{{ article.id }}</label>
+                        {{- "" -}}
+                        <input type="hidden" name="{{ root.index }}_{{ supplier }}_id" value="{{ article.id }}" />
+                        {{- "" -}}
+                      </td>
+                      <td class="name">
+                        {{- "" -}}
+                        <label for="{{ root.index }}_{{ supplier }}">{{ article.name }}</label>
+                        {{- "" -}}
+                        <input type="hidden" name="{{ root.index }}_{{ supplier }}_name" value="{{ article.name }}" />
+                        {{- "" -}}
+                      </td>
+                      <td class="size">
+                        {{- "" -}}
+                        <label for="{{ root.index }}_{{ supplier }}">{{ format_size(article.size) }}</label>
+                        {{- "" -}}
+                        <input type="hidden" name="{{ root.index }}_{{ supplier }}_size" value="{{ article.size }}" />
+                        {{- "" -}}
+                      </td>
+                      {%- if loop.first -%}
+                        <td rowspan="{{ len(article_choices) }}" class="amount">
+                          <input type="number" name="{{ root.index }}_amount" min="0" />
+                        </td>
+                      {%- endif -%}
+                    </tr>
+                  {% endfor %}
+                  {% if "hint" in article_choices %}
+                    <tr class="{{ "even" if root.index % 2 else "odd" }}">
+                      <td colspan="4" class="hint">{{ article_choices.hint }}</td>
+                    </tr>
+                  {% endif %}
+                  {% set root.index = root.index + 1 %}
+                {% endfor %}
+              </tbody>
+            {% endfor %}
+          </table>
+        </div>
+        <div class="buttons">
+          <div class="button-container">
+            <button type="reset">Zurücksetzen</button>
+          </div>
+          <div class="fill" />
+          {% for supplier in sorted(suppliers.keys()) %}
+          <div class="button-container {{ supplier }}">
+              <button type="submit" formaction="order/{{ supplier }}.pdf" name="supplier" value="{{ supplier }}">{{ supplier }} PDF</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+/src/aqua/order/resources/style.css
+/build
+__pycache__
+*.egg-info
