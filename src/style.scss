@@ -49,6 +49,20 @@ table {
   .hint {
     font-style: italic;
   }
+
+  .id input {
+    width: 6em;
+  }
+  .name input {
+    width: 100%;
+  }
+  .size input {
+    width: 6em;
+  }
+
+  input {
+    box-sizing: border-box;
+  }
 }
 
 .buttons {

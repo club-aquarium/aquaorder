@@ -36,6 +36,89 @@ function find_date_picker(): HTMLInputElement {
     return date_pickers[0]
 }
 
+function add_cell(
+    tr: HTMLElement,
+    td_attributes: {[key: string]: string},
+    input_attributes: {[key: string]: string},
+): HTMLInputElement {
+    const td = document.createElement("td")
+    for(const attr in td_attributes) {
+        td.setAttribute(attr, td_attributes[attr])
+    }
+    const input = td.appendChild(document.createElement("input"))
+    input.setAttribute("type", "text")
+    for(const attr in input_attributes) {
+        input.setAttribute(attr, input_attributes[attr])
+    }
+    tr.appendChild(td)
+    return input
+}
+
+function add_row(table: HTMLTableElement, index: number, even_odd: "even"|"odd", suppliers: string[]): void {
+    let first = true
+    for(const supplier of suppliers) {
+        const tr = document.createElement("tr")
+        add_cell(tr, {"class": "supplier"}, {
+            "type": "radio",
+            "tabindex": "-1",
+            "name": `${index}_supplier`,
+            "value": supplier,
+        })
+        add_cell(tr, {"class": "id"},   {"name": `${index}_${supplier}_id`,   "tabindex": "-1"})
+        add_cell(tr, {"class": "name"}, {"name": `${index}_${supplier}_name`, "tabindex": "-1"})
+        add_cell(tr, {"class": "size"}, {"name": `${index}_${supplier}_size`, "tabindex": "-1"})
+        if(first) {
+            add_cell(
+                tr,
+                {"rowspan": String(suppliers.length), "class": "amount"},
+                {"type": "number", "name": `${index}_amount`, "min": "0"},
+            ).scrollIntoView()
+            tr.classList.add("first")
+        }
+        tr.classList.add(even_odd)
+        tr.classList.add(supplier)
+        table.appendChild(tr)
+        if(first) {
+            first = false
+        }
+    }
+}
+
+function get_all_suppliers(): string[] {
+    const suppliers = []
+    for(const supplier_input of document.querySelectorAll('[name$="_supplier"]')) {
+        const m = supplier_input.getAttribute("name")?.match(/^\d+_supplier$/)
+        const supplier = supplier_input.getAttribute("value")
+        if(m && supplier && suppliers.indexOf(supplier) < 0) {
+            suppliers.push(supplier)
+        }
+    }
+    return suppliers.sort()
+}
+
+function get_highest_index(): number {
+    let index = -1
+    for(const amount_input of document.querySelectorAll('[name$="_amount"]')) {
+        const m = amount_input.getAttribute("name")?.match(/^(\d+)_amount$/)
+        if(m) {
+            const i = parseInt(m[1])
+            if(i > index) {
+                index = i
+            }
+        }
+    }
+    return index
+}
+
+function get_even_odd(table: HTMLTableElement): "even"|"odd" {
+    const trs = table.rows
+    if(trs.length == 0 || trs[trs.length - 1].classList.contains("even")) {
+        return "odd"
+    } else {
+        return "even"
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const date_picker = find_date_picker()
     console.log(date_picker)
@@ -51,4 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }-${
         String(date.getDate()).lpad(2, "0")
     }`)
+
+    const table = document.querySelector("table")
+    const add_line_button = document.getElementById("add_line")
+    if(table && add_line_button) {
+        const suppliers = get_all_suppliers()
+        add_line_button.addEventListener("click", () => {
+            add_row(table, get_highest_index() + 1, get_even_odd(table), suppliers)
+        })
+    }
 })
